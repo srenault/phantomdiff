@@ -21,6 +21,24 @@
         };
     };
 
+    var PhantomDiff = function() {
+        PhantomDiff.super_.apply(this, arguments);
+    };
+
+    utils.inherits(PhantomDiff, Casper);
+
+    var phantomDiff = new PhantomDiff({
+        viewportSize: { width: 1027, height: 800 },
+        verbose: true,
+        logLevel: 'debug'
+    });
+
+    var browser = require('casper').create({
+        viewportSize: { width: 1027, height: 800 },
+        verbose: true,
+        logLevel: 'info'
+    });
+
     var startDiffServer = function(baseline, current, callback) {
         var server = require('webserver').create();
         var fs = require("fs");
@@ -31,20 +49,14 @@
             response.close();
         });
 
-        var browser = require('casper').create({
-            viewportSize: { width: 1027, height: 800 },
-            verbose: true,
-            logLevel: 'debug'
-        });
-
-        return browser.start('http://localhost:1337', function() {
+        browser.start('http://localhost:1337', function() {
             browser.page.injectJs('/Users/sre/data/Projects/me/phantomdiff/imagediff.min.js');
-            browser.fill('form#images-diff', {
+            this.fill('form#images-diff', {
                 'baseline': baseline,
                 'current': current
             });
 
-            var r = browser.evaluate(function() {
+            this.evaluate(function() {
                 var baselineReader = new FileReader(),
                     currentReader = new FileReader(),
                     baselineURL = document.getElementById('baseline').files[0],
@@ -71,38 +83,38 @@
                 baselineReader.onload = getImageData(function(baselineImg) {
                     currentReader.onload = getImageData(function(currentImg) {
                         window.imageDiff.result.isEquals = imagediff.equal(baselineImg, currentImg, 100);
-                        window.imageDiff.result.diff = imagediff.diff(baselineImg, currentImg);
                         window.imageDiff.hasResult = true;
+                        window.imageDiff.result.diff = imagediff.diff(baselineImg, currentImg);
                     });
                     currentReader.readAsDataURL(currentURL);
                 });
                 baselineReader.readAsDataURL(baselineURL);
-             });
-
-            browser.waitFor(function check() {
-                return this.evaluate(function() {
-                    return window.imageDiff.hasResult;
-                });
-            }, function then() {
-                var result = browser.evaluate(function() {
-                    return window.imageDiff.result;
-                });
-                callback && callback(result);
-            }, function onTimeout() {
-                console.log('The processing to diff images timeout !');
-            }, 10000);
+            });
         });
+
+        var hasResult = false;
+        browser.waitFor(function check() {
+            return browser.evaluate(function() {
+                return window.imageDiff.hasResult;
+            });
+        }, function then() {
+            var result = browser.evaluate(function() {
+                return window.imageDiff.result;
+            });
+            hasResult = true;
+            callback && callback(result);
+        }, function onTimeout() {
+            console.log('The processing to diff images timeout !');
+        }, 10000);
+
+        browser.run();
+
+        return phantomDiff.waitFor(function() {
+            console.log(hasResult);
+            return hasResult;
+        }, function then() {
+        }, 3600000);
     };
-
-    var PhantomDiff = function() {
-        PhantomDiff.super_.apply(this, arguments);
-    };
-
-    utils.inherits(PhantomDiff, Casper);
-
-    var phantomDiff = new PhantomDiff({
-        viewportSize: { width: 1027, height: 800 }
-    });
 
     phantomDiff.test.assertImage = function(current, baseline, message) {
         var self = this;
@@ -116,7 +128,7 @@
                     diff: result.diff
                 }
             });
-        }).run();
+        });
     };
 
     phantomDiff.start('http://twelvesouth.wroom.dev', function() {
