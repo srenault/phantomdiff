@@ -4,12 +4,13 @@
 
 
 (function() {
-    var Casper = require('casper').Casper;
-    var utils = require("utils");
+    var Casper = require('casper').Casper,
+        utils = require("utils"),
+        fs = require('fs');
 
     var Config = new function() {
-        this.baseline = 'baseline/',
-        this.current = 'current/',
+        this.baseline = './baseline/',
+        this.current = './current/',
         this.baselineFilename = function(url) {
             var filename = url.substr(7, (url.length - 8)).replace(/\//g,'\\');
             return this.baseline + filename + '.png';
@@ -20,7 +21,7 @@
         };
     };
 
-    var startDiffServer = function(callback) {
+    var startDiffServer = function(baseline, current, callback) {
         var server = require('webserver').create();
         var fs = require("fs");
         var html = fs.read('images.html');
@@ -31,12 +32,65 @@
         });
 
         var browser = require('casper').create({
-            viewportSize: { width: 1027, height: 800 }
+            viewportSize: { width: 1027, height: 800 },
+            verbose: true,
+            logLevel: 'debug'
         });
 
         return browser.start('http://localhost:1337', function() {
-            
-            callback && callback(true);
+            browser.page.injectJs('/Users/sre/data/Projects/me/phantomdiff/imagediff.min.js');
+            browser.fill('form#images-diff', {
+                'baseline': baseline,
+                'current': current
+            });
+
+            var r = browser.evaluate(function() {
+                var baselineReader = new FileReader(),
+                    currentReader = new FileReader(),
+                    baselineURL = document.getElementById('baseline').files[0],
+                    currentURL = document.getElementById('current').files[0];
+
+                window.imageDiff = {
+                    hasResult: false,
+                    result: {
+                        isEquals: false,
+                        diff: null
+                    }
+                };
+
+                var getImageData = function(callback) {
+                    return function(b) {
+                        var img = new Image();
+                        img.onload = function() {
+                            callback && callback(img);
+                        };
+                        img.src = b.target.result;
+                    };
+                };
+
+                baselineReader.onload = getImageData(function(baselineImg) {
+                    currentReader.onload = getImageData(function(currentImg) {
+                        window.imageDiff.result.isEquals = imagediff.equal(baselineImg, currentImg, 100);
+                        window.imageDiff.result.diff = imagediff.diff(baselineImg, currentImg);
+                        window.imageDiff.hasResult = true;
+                    });
+                    currentReader.readAsDataURL(currentURL);
+                });
+                baselineReader.readAsDataURL(baselineURL);
+             });
+
+            browser.waitFor(function check() {
+                return this.evaluate(function() {
+                    return window.imageDiff.hasResult;
+                });
+            }, function then() {
+                var result = browser.evaluate(function() {
+                    return window.imageDiff.result;
+                });
+                callback && callback(result);
+            }, function onTimeout() {
+                console.log('The processing to diff images timeout !');
+            }, 10000);
         });
     };
 
@@ -50,16 +104,16 @@
         viewportSize: { width: 1027, height: 800 }
     });
 
-    phantomDiff.test.assertImage = function(subject, expected, message) {
+    phantomDiff.test.assertImage = function(current, baseline, message) {
         var self = this;
-        return startDiffServer(function(isEquals, diff) {
-            return self.assertTrue(isEquals, message, {
+        return startDiffServer(baseline, current, function(result) {
+            return self.assertTrue(result.isEquals, message, {
                 type: "assertImage",
                 standard: "Image equals the expected image",
                 values: {
-                    subject:  subject,
-                    expected: expected,
-                    diff: diff
+                    subject:  current,
+                    expected: baseline,
+                    diff: result.diff
                 }
             });
         }).run();
