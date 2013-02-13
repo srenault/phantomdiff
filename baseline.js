@@ -9,16 +9,17 @@
 
     var utils = require("utils");
 
-    var baseline = 'baseline/',
-        generateFilename = function(url) {
+    var Config = new function() {
+        this.baseline = 'baseline/',
+        this.formatFilename = function(url) {
             var filename = url.substr(7, (url.length - 8)).replace(/\//g,'\\');
-            return baseline + filename + '.png';
+            return this.baseline + filename + '.png';
         };
-
-    var urls = [
-        'http://twelvesouth.wroom.dev/documents/-live/',
-        'http://twelvesouth.wroom.dev/documents/-edited/'
-    ];
+        this.urls = [
+            'http://twelvesouth.wroom.dev/documents/-live/',
+            'http://twelvesouth.wroom.dev/documents/-edited/'
+        ];
+    };
 
     casper.start('http://twelvesouth.wroom.dev', function() {
         casper.echo("Logging into wroom...");
@@ -27,14 +28,14 @@
             'password': 'wio8859!'
         }, true);
         console.log('Capturing ' + this.getCurrentUrl());
-        casper.captureSelector(generateFilename(this.getCurrentUrl()), 'body');
+        casper.captureSelector(Config.formatFilename(this.getCurrentUrl()), 'body');
     });
 
-    urls.forEach(function(url) {
+    Config.urls.forEach(function(url) {
         casper.thenOpen(url, function() {
             console.log('Capturing ' + this.getCurrentUrl());
             casper.wait(1000, function() {
-                casper.captureSelector(generateFilename(this.getCurrentUrl()), 'body');
+                casper.captureSelector(Config.formatFilename(this.getCurrentUrl()), 'body');
             });
         });
     });
