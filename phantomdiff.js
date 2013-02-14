@@ -40,8 +40,7 @@ var PhantomDiff = function(casper) {
                 var baselineReader = new FileReader(),
                     currentReader = new FileReader(),
                     baselineURL = document.getElementById('baseline').files[0],
-                    currentURL = document.getElementById('current').files[0],
-                    toDataURLFixed = false;
+                    currentURL = document.getElementById('current').files[0];
 
                 window.imageDiff = {
                     hasResult: false,
@@ -64,7 +63,7 @@ var PhantomDiff = function(casper) {
                 baselineReader.onload = getImageData(function(baselineImg) {
                     currentReader.onload = getImageData(function(currentImg) {
                         window.imageDiff.result.isEquals = imagediff.equal(baselineImg, currentImg, 100);
-                        if(!window.imageDiff.result.isEquals && toDataURLFixed) {
+                        if(!window.imageDiff.result.isEquals) {
                             var rawDiff = imagediff.diff(baselineImg, currentImg);
                             var canvasDiff = imagediff.createCanvas(rawDiff.width, rawDiff.height);
                             var context = canvasDiff.getContext('2d');
@@ -94,8 +93,7 @@ var PhantomDiff = function(casper) {
             console.log('The processing to diff images timeout !');
         }, 10000);
 
-        browser.run(function() {
-        });
+        browser.run(function(){}); //Don't remove this.
 
         casper.waitFor(function() {
             return hasResult;
@@ -104,19 +102,43 @@ var PhantomDiff = function(casper) {
 
     casper.test.exporter = require(Config.htmlReporter).create();
 
-    casper.test.assertImage = function(current, baseline, message) {
+    var checkBaseline = function(baseline) {
+        try {
+            fs.open(baseline, 'r');
+            return true;
+        } catch (e) {
+            return false;
+        }
+    };
+
+    casper.test.assertImage = function(baseline, current, message) {
         var self = this;
-        startDiffServer(baseline, current, function(result) {
-            self.assertTrue(result.isEquals, message, {
-                type: "assertImage",
-                standard: "Image equals the expected image",
+        if(checkBaseline(baseline)) {
+            startDiffServer(baseline, current, function(result) {
+                self.assertTrue(result.isEquals, message, {
+                    type: "assertImage",
+                    standard: "Image equals the expected image",
+                    values: {
+                        subject: current,
+                        expected: baseline
+                    }
+                });
+            });
+        } else {
+            self.assertTrue(true, 'The following reference image was not found : ' + baseline, {
+                type: "baselineNotFound",
+                standard: "A baseline image was'nt not found.",
                 values: {
-                    subject:  current,
-                    expected: baseline,
-                    diff: result.diff
+                    subject: baseline,
+                    expected: baseline
                 }
             });
-        });
+            try {
+                casper.log('Completing the missing image in the baseline directory', 'warning');
+                fs.copy(current, baseline);
+            } catch(e) {
+                casper.log('An error occured whilte completing the missing image in the baseline directory', 'error');
+            }
+        }
     };
-}
-
+};

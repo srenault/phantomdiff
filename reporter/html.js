@@ -43,22 +43,17 @@ HTMLExporter.prototype.copyImagesToReport = function copyImagesToReport(baseline
 
 HTMLExporter.prototype.addSuccess = function addSuccess(classname, name, duration, _success_) {
     "use strict";
-    console.log('#######################');
-    console.log('classname : ' + classname);
-    console.log('name : ' + name);
-    console.log('duration : ' + duration);
-    console.log('_success_ : ' + JSON.stringify(_success_));
 };
 
 HTMLExporter.prototype.addFailure = function addFailure(classname, name, message, type, duration, _failure_) {
     "use strict";
-    //console.log('####################### ' + classname);
 };
 
 HTMLExporter.prototype.setSuiteDuration = function setSuiteDuration(duration) {
 };
 
 HTMLExporter.prototype.setTestResults = function setTestResults(testResults) {
+    //console.log(JSON.stringify(testResults));
 };
 
 HTMLExporter.prototype.getXML = function getXML() {
