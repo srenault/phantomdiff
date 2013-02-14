@@ -4,6 +4,13 @@
 
 var fs = require("fs");
 
+var Config = {
+    addressURL: 'http://localhost:1337',
+    page: './images.html',
+    imagediff: './libs/imagediff.min.js',
+    htmlReporter: './reporter/html'
+};
+
 exports.init = function create(casper) {
     return new PhantomDiff(casper);
 };
@@ -11,21 +18,19 @@ exports.init = function create(casper) {
 exports.PhantomDiff = PhantomDiff;
 
 var PhantomDiff = function(casper) {
-
     var startDiffServer = function(baseline, current, callback) {
         var browser = require('casper').create({
             viewportSize: { width: 1027, height: 800 }
         });
         var server = require('webserver').create();
-        var html = fs.read('images.html');
+        var html = fs.read(Config.page);
         var service = server.listen(1337, function(request, response) {
             response.statusCode = 200;
             response.write(html);
             response.close();
         });
-
-        browser.start('http://localhost:1337', function() {
-            browser.page.injectJs('/Users/sre/data/Projects/me/phantomdiff/imagediff.min.js');
+        browser.start(Config.addressURL, function() {
+            browser.page.injectJs(Config.imagediff);
             this.fill('form#images-diff', {
                 'baseline': baseline,
                 'current': current
@@ -97,7 +102,7 @@ var PhantomDiff = function(casper) {
         }, null, null, 3600000);
     };
 
-    casper.test.exporter = require('./html').create();
+    casper.test.exporter = require(Config.htmlReporter).create();
 
     casper.test.assertImage = function(current, baseline, message) {
         var self = this;
