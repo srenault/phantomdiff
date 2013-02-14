@@ -28,8 +28,26 @@ function HTMLExporter() {
         successesNode = utils.node('ul', { 'class': 'successes'}),
         failuresNode = utils.node('ul', { 'class': 'failures'});
 
+    var summaryNode = function() {
+        var node = utils.node('div', { 'class': 'summary'}),
+            titleNode = utils.node('h1'),
+            infoNode = utils.node('div', { 'class': 'info' }),
+            totalNode = utils.node('span', { 'class': 'total'}),
+            errorsNode = utils.node('span', { 'class': 'errors'}),
+            okNode = utils.node('span', { 'class': 'ok'});
+
+        titleNode.appendChild(document.createTextNode('Summary'));
+        node.appendChild(titleNode);
+        infoNode.appendChild(totalNode);
+        infoNode.appendChild(errorsNode);
+        infoNode.appendChild(okNode);
+        node.appendChild(infoNode);
+        return node;
+    };
+
     headNode.appendChild(cssImport);
     htmlNode.appendChild(headNode);
+    bodyNode.appendChild(summaryNode());
     bodyNode.appendChild(successesNode);
     bodyNode.appendChild(failuresNode);
     htmlNode.appendChild(bodyNode);
@@ -104,13 +122,20 @@ HTMLExporter.prototype.addFailure = function addFailure(classname, name, message
             baselineNode = utils.node('div', { 'class': 'baseline' }),
             currentNode = utils.node('div', { 'class': 'current' }),
             baselineImg = utils.node('img', { src: _failure_.values.subject }),
+            baselineLabel = utils.node('p'),
+            currentLabel = utils.node('p'),
             currentImg = utils.node('img', { src: _failure_.values.expected });
 
+        baselineLabel.appendChild(document.createTextNode('Baseline:'));
+        baselineNode.appendChild(baselineLabel);
         baselineNode.appendChild(baselineImg);
+        currentLabel.appendChild(document.createTextNode('Current:'));
+        currentNode.appendChild(currentLabel);
         currentNode.appendChild(currentImg);
         detailsNode.appendChild(baselineNode);
         detailsNode.appendChild(currentNode);
         failureNode.appendChild(detailsNode);
+    } else {
     }
     failuresNodes.appendChild(failureNode);
 };
@@ -121,10 +146,22 @@ HTMLExporter.prototype.addFailure = function addFailure(classname, name, message
  * @param  Number  duration  Test duration in milliseconds
  */
 HTMLExporter.prototype.setSuiteDuration = function setSuiteDuration(duration) {
-    "use strict";
-    //if (!isNaN(duration)) {
-    //this._html.setAttribute("time", utils.ms2seconds(duration));
-    //}
+};
+
+HTMLExporter.prototype.setTestResults = function setTestResults(testResults) {
+    console.log(JSON.stringify(testResults));
+    var totalNode = this._html.querySelector('.summary .info .total'),
+        errorsNode = this._html.querySelector('.summary .info .errors'),
+        okNode = this._html.querySelector('.summary .info .ok'),
+        total = testResults.passed + testResults.failed;
+
+    var totalTime = testResults.passesTime.concat(testResults.failuresTime).reduce(function add(a, b) {
+        return a + b;
+    }, 0);
+
+    totalNode.appendChild(document.createTextNode(total + ' tests in ' + totalTime + ' ms'));
+    okNode.appendChild(document.createTextNode(testResults.passed + ' passed'));
+    errorsNode.appendChild(document.createTextNode(testResults.failed + ' failed'));
 };
 
 /**
