@@ -32,7 +32,7 @@
     });
 
     phantomDiff.test.exporter = require('./html').create();
-    phantomDiff.test.assertImage = function(current, baseline, message) {
+    phantomDiff.test.assertImage = function(baseline, current, message) {
         var self = this;
         startDiffServer(baseline, current, function(result) {
             self.assertTrue(result.isEquals, message, {
@@ -73,8 +73,7 @@
                 var baselineReader = new FileReader(),
                     currentReader = new FileReader(),
                     baselineURL = document.getElementById('baseline').files[0],
-                    currentURL = document.getElementById('current').files[0],
-                    toDataURLFixed = false;
+                    currentURL = document.getElementById('current').files[0];
 
                 window.imageDiff = {
                     hasResult: false,
@@ -97,13 +96,6 @@
                 baselineReader.onload = getImageData(function(baselineImg) {
                     currentReader.onload = getImageData(function(currentImg) {
                         window.imageDiff.result.isEquals = imagediff.equal(baselineImg, currentImg, 100);
-                        if(!window.imageDiff.result.isEquals && toDataURLFixed) {
-                            var rawDiff = imagediff.diff(baselineImg, currentImg);
-                            var canvasDiff = imagediff.createCanvas(rawDiff.width, rawDiff.height);
-                            var context = canvasDiff.getContext('2d');
-                            context.putImageData(rawDiff, 0, 0);
-                            window.imageDiff.result.diff = canvasDiff.toDataURL();
-                        }
                         window.imageDiff.hasResult = true;
                     });
                     currentReader.readAsDataURL(currentURL);
@@ -146,6 +138,11 @@
 
         this.captureSelector(current, 'body');
         this.test.assertImage(baseline, current, 'The image ' + baseline + ' should be equal to ' + current);
+    });
+
+    phantomDiff.then(function() {
+        this.test.assertTrue(false, "A should be false");
+        this.test.assertTrue(false, "B should be false");
     });
 
     phantomDiff.run(function() {

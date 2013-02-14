@@ -29,6 +29,19 @@ li {
     overflow: hidden;
 }
 
+.details .subject, .expected {
+    display: block;
+    font-weight: bold;
+    margin: 0;
+    padding: 5px;
+    margin-bottom: 1px;
+    background: #E4EDF3;
+}
+
+.details .value {
+    font-weight: normal;
+}
+
 .failures .message {
     background: #B03911;
     color: white;

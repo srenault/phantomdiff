@@ -25,8 +25,11 @@ function HTMLExporter() {
             media: "screen",
             href: "report.css"
         }),
-        successesNode = utils.node('ul', { 'class': 'successes'}),
-        failuresNode = utils.node('ul', { 'class': 'failures'});
+        successesNode = utils.node('div', { 'class': 'successes'}),
+        failuresNode = utils.node('div', { 'class': 'failures'});
+
+    successesNode.appendChild(utils.node('ul'));
+    failuresNode.appendChild(utils.node('ul'));
 
     var summaryNode = function() {
         var node = utils.node('div', { 'class': 'summary'}),
@@ -93,6 +96,16 @@ HTMLExporter.prototype.addSuccess = function addSuccess(classname, name, duratio
     this._html.appendChild(snode);
 };
 
+HTMLExporter.prototype.addMessageToTest = function(elt, message, forFailure) {
+    var messageNode = utils.node('p', { 'class': 'message'});
+    var nbFailures = this._html.querySelectorAll('.failures li').length + 1;
+    message = nbFailures + ' - ' + message;
+    message = forFailure ? ('#FAIL ' + message) : ('#SUCCESS ' + message);
+    messageNode.appendChild(document.createTextNode(message));
+    elt.appendChild(messageNode);
+    return elt;
+};
+
 /**
  * Adds a failed test result.
  *
@@ -102,29 +115,27 @@ HTMLExporter.prototype.addSuccess = function addSuccess(classname, name, duratio
  * @param  String  type
  * @param  Number  duration  Test duration in milliseconds
  */
-
-var addMessage = function(elt, message) {
-    var messageNode = utils.node('p', { 'class': 'message'});
-    messageNode.appendChild(document.createTextNode(message));
-    elt.appendChild(messageNode);
-    return elt;
-};
-
 HTMLExporter.prototype.addFailure = function addFailure(classname, name, message, type, duration, _failure_) {
     "use strict";
-    var failureNode = addMessage(utils.node('li'), _failure_.message);
-    var failuresNodes = this._html.getElementsByClassName('failures')[0];
+    var failureNode = this.addMessageToTest(utils.node('li'), _failure_.message, true);
+    var failuresNodes = this._html.querySelector('.failures ul');
 
     if (type == 'assertImage') {
-        console.log(JSON.stringify(_failure_));
         this.copyImagesToReport(_failure_.values.expected, _failure_.values.subject);
         var detailsNode = utils.node('div', { 'class': 'details' }),
             baselineNode = utils.node('div', { 'class': 'baseline' }),
             currentNode = utils.node('div', { 'class': 'current' }),
-            baselineImg = utils.node('img', { src: _failure_.values.subject }),
+            baselineImg = utils.node('img', { src: _failure_.values.expected }),
             baselineLabel = utils.node('p'),
             currentLabel = utils.node('p'),
-            currentImg = utils.node('img', { src: _failure_.values.expected });
+            currentImg = utils.node('img', { src: _failure_.values.subject });
+
+        if(!this._html.querySelector('.failures .title')) {
+            var failuresContainer = this._html.querySelector('.failures');
+            var title = utils.node('h3', { 'class': 'title'});
+            title.appendChild(document.createTextNode('Tests failed'));
+            failuresContainer.insertBefore(title, failuresContainer.firstChild);
+        }
 
         baselineLabel.appendChild(document.createTextNode('Baseline:'));
         baselineNode.appendChild(baselineLabel);
