@@ -114,21 +114,17 @@
         }, 10000);
 
         browser.run(function() {
-            this.exit();
         });
 
-        return phantomDiff.waitFor(function() {
+        phantomDiff.waitFor(function() {
             return hasResult;
-        }, function then() {
-        }, function onTimeout() {
-            console.log('The processing to diff images timeout !');
-        }, 3600000);
+        }, null, null, 3600000);
     };
 
     phantomDiff.test.assertImage = function(current, baseline, message) {
         var self = this;
-        return startDiffServer(baseline, current, function(result) {
-            return self.assertTrue(result.isEquals, message, {
+        startDiffServer(baseline, current, function(result) {
+            self.assertTrue(result.isEquals, message, {
                 type: "assertImage",
                 standard: "Image equals the expected image",
                 values: {
@@ -149,15 +145,13 @@
             'password': 'wio8859!'
         }, true);
 
-        phantomDiff.captureSelector(current, 'body');
+        this.captureSelector(current, 'body');
         this.test.assertImage(current, baseline, 'first test');
-    });
-
-    phantomDiff.then(function() {
     });
 
     phantomDiff.run(function() {
         this.test.done();
+        this.test.renderResults(true, 0, 'report.html');
         phantomDiff.exit();
     });
 })();
