@@ -1,2 +1,8 @@
 baseline
 current
+report/baseline
+report/current
+
+*.DS_Store
+*~
+*#*

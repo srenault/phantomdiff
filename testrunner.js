@@ -24,14 +24,28 @@
     var PhantomDiff = function() {
         PhantomDiff.super_.apply(this, arguments);
     };
-
     utils.inherits(PhantomDiff, Casper);
-
     var phantomDiff = new PhantomDiff({
         viewportSize: { width: 1027, height: 800 },
         verbose: true,
         logLevel: 'debug'
     });
+
+    phantomDiff.test.exporter = require('./html').create();
+    phantomDiff.test.assertImage = function(current, baseline, message) {
+        var self = this;
+        startDiffServer(baseline, current, function(result) {
+            self.assertTrue(result.isEquals, message, {
+                type: "assertImage",
+                standard: "Image equals the expected image",
+                values: {
+                    subject:  current,
+                    expected: baseline,
+                    diff: result.diff
+                }
+            });
+        });
+    };
 
     var startDiffServer = function(baseline, current, callback) {
         var browser = require('casper').create({
@@ -121,21 +135,6 @@
         }, null, null, 3600000);
     };
 
-    phantomDiff.test.assertImage = function(current, baseline, message) {
-        var self = this;
-        startDiffServer(baseline, current, function(result) {
-            self.assertTrue(result.isEquals, message, {
-                type: "assertImage",
-                standard: "Image equals the expected image",
-                values: {
-                    subject:  current,
-                    expected: baseline,
-                    diff: result.diff
-                }
-            });
-        });
-    };
-
     phantomDiff.start('http://twelvesouth.wroom.dev', function() {
         var baseline = Config.baselineFilename(this.getCurrentUrl()),
             current = Config.currentFilename(this.getCurrentUrl());
@@ -146,12 +145,12 @@
         }, true);
 
         this.captureSelector(current, 'body');
-        this.test.assertImage(current, baseline, 'first test');
+        this.test.assertImage(baseline, current, 'The image ' + baseline + ' should be equal to ' + current);
     });
 
     phantomDiff.run(function() {
         this.test.done();
-        this.test.renderResults(true, 0, 'report.html');
+        this.test.renderResults(true, 0, './report/report.html');
         phantomDiff.exit();
     });
 })();

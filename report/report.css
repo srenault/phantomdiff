@@ -1,0 +1,42 @@
+p {
+    font-family: "Helvetica Neue"
+    font-size: 12px;
+}
+
+ul {
+    padding: 0;
+}
+
+li {
+    list-style-type: none;
+}
+
+.failure {
+    overflow: none;
+}
+
+.failures .message {
+    background: #A23232;
+    color: white;
+    padding: 10px;
+}
+
+.baseline {
+    float: left;
+}
+
+.current {
+    float: right;
+}
+
+.current {
+    margin-left: 20px;
+}
+
+.baseline img {
+    height: 500px;
+}
+
+.current img {
+    height: 500px;
+}
