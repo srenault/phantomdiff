@@ -33,13 +33,12 @@
         logLevel: 'debug'
     });
 
-    var browser = require('casper').create({
-        viewportSize: { width: 1027, height: 800 },
-        verbose: true,
-        logLevel: 'info'
-    });
-
     var startDiffServer = function(baseline, current, callback) {
+        var browser = require('casper').create({
+            viewportSize: { width: 1027, height: 800 }
+//            verbose: true,
+//            logLevel: 'info'
+        });
         var server = require('webserver').create();
         var fs = require("fs");
         var html = fs.read('images.html');
@@ -60,7 +59,8 @@
                 var baselineReader = new FileReader(),
                     currentReader = new FileReader(),
                     baselineURL = document.getElementById('baseline').files[0],
-                    currentURL = document.getElementById('current').files[0];
+                    currentURL = document.getElementById('current').files[0],
+                    toDataURLFixed = false;
 
                 window.imageDiff = {
                     hasResult: false,
@@ -83,8 +83,14 @@
                 baselineReader.onload = getImageData(function(baselineImg) {
                     currentReader.onload = getImageData(function(currentImg) {
                         window.imageDiff.result.isEquals = imagediff.equal(baselineImg, currentImg, 100);
+                        if(!window.imageDiff.result.isEquals && toDataURLFixed) {
+                            var rawDiff = imagediff.diff(baselineImg, currentImg);
+                            var canvasDiff = imagediff.createCanvas(rawDiff.width, rawDiff.height);
+                            var context = canvasDiff.getContext('2d');
+                            context.putImageData(rawDiff, 0, 0);
+                            window.imageDiff.result.diff = canvasDiff.toDataURL();
+                        }
                         window.imageDiff.hasResult = true;
-                        window.imageDiff.result.diff = imagediff.diff(baselineImg, currentImg);
                     });
                     currentReader.readAsDataURL(currentURL);
                 });
@@ -107,12 +113,15 @@
             console.log('The processing to diff images timeout !');
         }, 10000);
 
-        browser.run();
+        browser.run(function() {
+            this.exit();
+        });
 
         return phantomDiff.waitFor(function() {
-            console.log(hasResult);
             return hasResult;
         }, function then() {
+        }, function onTimeout() {
+            console.log('The processing to diff images timeout !');
         }, 3600000);
     };
 
