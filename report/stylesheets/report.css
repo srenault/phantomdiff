@@ -1,24 +1,69 @@
 * { font-family: "Helvetica Neue"; }
 body { background: #EBEBEB; }
 ul { padding: 0; }
-p { margin: 0 }
+p, dl { margin: 0 }
 li { list-style-type: none; }
+a { color: black; }
+a:visited { color: black; }
+h3 { padding: 4px; margin: 0 }
+
+.button {
+    cursor: pointer;
+    border: 1px solid grey;
+    border-radius: 3px;
+    height: 38px;
+    text-transform: uppercase;
+    margin-left: 10px;
+    font-size: 16pt;
+    text-align: center;
+    line-height: 1px;
+}
+
+.button.white {
+    background: white;
+    color: black;
+}
+
+.details {
+    display: block;
+    padding: 10px;
+    background: white;
+}
 
 .details.images {
     overflow: hidden;
+    padding: 0px 10px 10px 10px;
+}
+
+.details.images .title {
+    padding-bottom: 8px;
+}
+
+.details.images .actions {
+    overflow: hidden;
+}
+
+.details.images .actions .button {
+    margin-top: 10px;
+    float: right;
 }
 
 .baseline {
     float: left;
 }
 
-.current {
-    float: right;
+.current, .diff {
+    float: left;
+    margin-left: 100px;
 }
 
-.current img, .baseline img {
+.current img, .baseline img, .diff img {
     border: 1px solid;
-    height: 500px;
+    max-height: 500px;
+}
+
+.diff {
+    display: none;
 }
 
 dl {
@@ -39,6 +84,30 @@ dt, dd {
 .info {
     padding: 10px;
     border: 1px solid black;
+    background: white;
+}
+
+.test-suite {
+    border: 1px solid black;
+}
+
+.test-suite h3 {
+    border: 1px solid black;
+    cursor: pointer;
+    color: white;
+}
+
+.test-suite .tests {
+    display: block;
+}
+
+.test-suite .tests.collapsed {
+    display: none;
+}
+
+.summary .info .description {
+    border: 1px solid black;
+    margin-top: 25px;
 }
 
 .summary .info .tests-suite dl {
@@ -46,7 +115,7 @@ dt, dd {
 }
 
 .summary .info .tests-suite dt {
-    width: 75px;
+    width: 100px;
 }
 
 .summary .info .tests-suite dd {
@@ -67,6 +136,10 @@ dt, dd {
     text-align: right;
 }
 
+.tests-suite .info {
+    margin-bottom: 20px;
+}
+
 .tests-suite .test-suite dl {
     width: 600px;
 }
@@ -80,8 +153,8 @@ dt, dd {
 }
 
 .test {
+    margin-top: 10px;
     border: 1px solid black;
-    padding: 2px;
 }
 
 .test .message {
@@ -90,12 +163,20 @@ dt, dd {
     color: white;
 }
 
-.test.succeed .message {
+.test .details.collapsed {
+    display: none;
+}
+
+.test-suite .title.succeed, .test.succeed .message {
     background: green;
 }
 
-.test.failed .message {
+.test-suite .title.failed, .test.failed .message {
     background: red;
+}
+
+.test.failed .details.images .current img {
+    border-color: red;
 }
 
 .test.warning .message {

@@ -13,7 +13,7 @@
     var utils = require("utils");
 
     var Config = new function() {
-        this.baseline = 'baseline/',
+        this.baseline = './images/baseline/',
         this.formatFilename = function(url) {
             var filename = url.substr(7, (url.length - 8)).replace(/\//g,'\\');
             return this.baseline + filename + '.png';

@@ -2,6 +2,7 @@
 <head>
   <link rel="stylesheet" media="screen" href="stylesheets/report.css">
   <script src="javascripts/imagediff.min.js" type="text/javascript"></script>
+  <script src="javascripts/jquery-1.9.1.min.js" type="text/javascript"></script>
 </head>
 <body>
   <h1>Report - Wroom.io - 02/15/2013</h1>
@@ -9,74 +10,84 @@
     <h2>Summary</h2>
     <div class="info">
       <div class="tests-suite">
-        <span class="qty-tests-suite">2 tests suite</span>
         <dl>
-          <dt>usecase1</dt>
+          <dt>Tests suite</dt>
+          <dd>2</dd>
+          <dt><a href="#usecase1">usecase1</a></dt>
           <dd>/Volumes/HOME/Projects/me/phantomdiff/tests/usecase1.js</dd>
-          <dt>usecase2</dt>
+          <dt><a href="#usecase2">usecase2</a></dt>
           <dd>/Volumes/HOME/Projects/me/phantomdiff/tests/usecase2.js</dd>
         </dl>
       </div>
       <dl class="description">
-        <dt class="qty-tests">Number of tests</dt>
+        <dt class="qty-tests">Tests</dt>
         <dd>2</dd>
-        <dt class="total-time">Duration</dt>
-        <dd>20 ms</dd>
         <dt class="qty-failures">Test failed</dt>
         <dd>3</dd>
         <dt class="qty-passes">Test succeed</dt>
         <dd>1</dd>
+        <dt class="total-time">Duration</dt>
+        <dd>20 ms</dd>
       </dl>
     </div>
   </div>
   <div class="tests-suite">
     <ul>
-      <li>
+      <li id="usecase1">
         <div class="test-suite">
-          <h3>Test suite : Use case 1</h3>
-          <div class="info">
-            <dl class="description">
-              <dt class="file-name">File</dt>
-              <dd>/Volumes/HOME/Projects/me/phantomdiff/tests/usecase1.js</dd>
-              <dt class="qty-tests">Number of tests</dt>
-              <dd>2</dd>
-              <dt class="total-time">Duration</dt>
-              <dd>20 ms</dd>
-              <dt class="qty-failures">Test failed</dt>
-              <dd>3</dd>
-              <dt class="qty-passes">Test succeed</dt>
-              <dd>1</dd>
-            </dl>
+          <h3 class="title failed">Test suite : Use case 1</h3>
+          <div class="tests collapsed">
+            <div class="info">
+              <dl class="description">
+                <dt class="file-name">File</dt>
+                <dd>/Volumes/HOME/Projects/me/phantomdiff/tests/usecase1.js</dd>
+                <dt class="qty-tests">Tests</dt>
+                <dd>2</dd>
+                <dt class="qty-failures">Test failed</dt>
+                <dd>3</dd>
+                <dt class="qty-passes">Test succeed</dt>
+                <dd>1</dd>
+                <dt class="total-time">Duration</dt>
+                <dd>20 ms</dd>
+              </dl>
+            </div>
+            <ul>
+              <li class="test failed">
+                <p class="message">Test 1 - #FAILED - ImageTest should convert be the same image - 12 ms</p>
+                <div class="details images">
+                  <div class="actions">
+                    <button class="button white do-diff">Diff</button>
+                  </div>
+                  <div class="baseline">
+                    <p class="title">Baseline</p>
+                    <img src="images/baseline/1_normal_a.jpg" />
+                  </div>
+                  <div class="current">
+                    <p class="title">Current</p>
+                    <img src="images/current/1_normal_b.jpg" />
+                  </div>
+                  <div class="diff">
+                    <p class="title">Diff</p>
+                  </div>
+                </div>
+              </li>
+              <li class="test succeed">
+                <p class="message">Test 2 - #SUCCEED - A should convert be true - 12 ms</p>
+                <div class="details collapsed">
+                  <span class="expected">Value expected :</span><span class="value">true</span>
+                </div>
+              </li>
+              <li class="test warning">
+                <p class="message">Test 3 - #SUCCEED - Image A wasn't found in the baseline directory. It was created - 9ms</p>
+                <div class="details collapsed">
+                  <span class="expected">The following image has been created :</span><span class="value">./images/current/twelvesouth.wroom.dev.png</span>
+                </div>
+              </li>
+            </ul>
           </div>
-          <ul>
-            <li class="test failed">
-              <p class="message">Test 1 - #FAILED - ImageTest should convert be the same image - 12 ms</p>
-              <div class="details images">
-                <div class="baseline">
-                  <p>Baseline</p>
-                  <img src="images/baseline/twelvesouth.wroom.dev.png" />
-                </div>
-                <div class="current">
-                  <p>Current</p>
-                  <img src="images/current/twelvesouth.wroom.dev.png" />
-                </div>
-              </div>
-            </li>
-            <li class="test succeed">
-              <p class="message">Test 2 - #SUCCEED - A should convert be true - 12 ms</p>
-              <div class="details">
-                <span class="expected">Value expected :</span><span class="value">true</span>
-              </div>
-            </li>
-            <li class="test warning">
-              <p class="message">Test 3 - #SUCCEED - Image A wasn't found in the baseline directory. It was created - 9ms</p>
-              <div class="details">
-                <span class="expected">The following image has been created :</span><span class="value">./images/current/twelvesouth.wroom.dev.png</span>
-              </div>
-            </li>
-          </ul>
         </div>
       </li>
     </ul>
   </div>
+  <script src="javascripts/report.js" type="text/javascript"></script>
 </body>
