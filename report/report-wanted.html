@@ -1,37 +1,82 @@
 <!DOCTYPE html>
 <head>
-  <link rel="stylesheet" media="screen" href="report.css">
+  <link rel="stylesheet" media="screen" href="stylesheets/report.css">
+  <script src="javascripts/imagediff.min.js" type="text/javascript"></script>
 </head>
 <body>
+  <h1>Report - Wroom.io - 02/15/2013</h1>
   <div class="summary">
-    <h1>Summary</h1>
+    <h2>Summary</h2>
     <div class="info">
-      <span class="total">2 tests in 2470 ms</span>
-      <span class="errors">1 failing</span>
-      <span class="ok">1 success</span>
+      <div class="tests-suite">
+        <span class="qty-tests-suite">2 tests suite</span>
+        <dl>
+          <dt>usecase1</dt>
+          <dd>/Volumes/HOME/Projects/me/phantomdiff/tests/usecase1.js</dd>
+          <dt>usecase2</dt>
+          <dd>/Volumes/HOME/Projects/me/phantomdiff/tests/usecase2.js</dd>
+        </dl>
+      </div>
+      <dl class="description">
+        <dt class="qty-tests">Number of tests</dt>
+        <dd>2</dd>
+        <dt class="total-time">Duration</dt>
+        <dd>20 ms</dd>
+        <dt class="qty-failures">Test failed</dt>
+        <dd>3</dd>
+        <dt class="qty-passes">Test succeed</dt>
+        <dd>1</dd>
+      </dl>
     </div>
   </div>
-  <h2>Failing spec</h2>
-  <ul class="testcase failures">
-    <li class="failure">
-      <p class="message">#FAIL 1 - ImageTest should convert be the same image.</p>
-      <div class="details">
-        <div class="baseline">
-          <p>Baseline</p>
-          <img src="images/baseline/twelvesouth.wroom.dev_.png" />
+  <div class="tests-suite">
+    <ul>
+      <li>
+        <div class="test-suite">
+          <h3>Test suite : Use case 1</h3>
+          <div class="info">
+            <dl class="description">
+              <dt class="file-name">File</dt>
+              <dd>/Volumes/HOME/Projects/me/phantomdiff/tests/usecase1.js</dd>
+              <dt class="qty-tests">Number of tests</dt>
+              <dd>2</dd>
+              <dt class="total-time">Duration</dt>
+              <dd>20 ms</dd>
+              <dt class="qty-failures">Test failed</dt>
+              <dd>3</dd>
+              <dt class="qty-passes">Test succeed</dt>
+              <dd>1</dd>
+            </dl>
+          </div>
+          <ul>
+            <li class="test failed">
+              <p class="message">Test 1 - #FAILED - ImageTest should convert be the same image - 12 ms</p>
+              <div class="details images">
+                <div class="baseline">
+                  <p>Baseline</p>
+                  <img src="images/baseline/twelvesouth.wroom.dev.png" />
+                </div>
+                <div class="current">
+                  <p>Current</p>
+                  <img src="images/current/twelvesouth.wroom.dev.png" />
+                </div>
+              </div>
+            </li>
+            <li class="test succeed">
+              <p class="message">Test 2 - #SUCCEED - A should convert be true - 12 ms</p>
+              <div class="details">
+                <span class="expected">Value expected :</span><span class="value">true</span>
+              </div>
+            </li>
+            <li class="test warning">
+              <p class="message">Test 3 - #SUCCEED - Image A wasn't found in the baseline directory. It was created - 9ms</p>
+              <div class="details">
+                <span class="expected">The following image has been created :</span><span class="value">./images/current/twelvesouth.wroom.dev.png</span>
+              </div>
+            </li>
+          </ul>
         </div>
-        <div class="current">
-          <p>Current</p>
-          <img src="images/current/twelvesouth.wroom.dev.png" />
-        </div>
-      </div>
-    </li>
-    <li class="failure">
-      <p class="message">#FAIL 2 - The boolean shoud be true.</p>
-      <div class="details">
-        <p class="expected">Expected: <span class="value">true</span></p>
-        <p class="subject">Subject: <span class="value">false</span></p>
-      </div>
-    </li>
-  </ul>
+      </li>
+    </ul>
+  </div>
 </body>

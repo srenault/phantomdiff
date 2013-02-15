@@ -1,0 +1,103 @@
+* { font-family: "Helvetica Neue"; }
+body { background: #EBEBEB; }
+ul { padding: 0; }
+p { margin: 0 }
+li { list-style-type: none; }
+
+.details.images {
+    overflow: hidden;
+}
+
+.baseline {
+    float: left;
+}
+
+.current {
+    float: right;
+}
+
+.current img, .baseline img {
+    border: 1px solid;
+    height: 500px;
+}
+
+dl {
+    overflow: hidden;
+}
+
+dd {
+    padding: 4px;
+    float: left;
+    margin-left: 40px;
+}
+
+dt, dd {
+    padding: 4px;
+    float: left;
+}
+
+.info {
+    padding: 10px;
+    border: 1px solid black;
+}
+
+.summary .info .tests-suite dl {
+    width: 600px;
+}
+
+.summary .info .tests-suite dt {
+    width: 75px;
+}
+
+.summary .info .tests-suite dd {
+    width: 390px;
+    text-align: left;
+}
+
+.summary .info dl {
+    width: 300px;
+}
+
+.summary .info .description dt {
+    width: 40%;
+}
+
+.summary .info .description dd {
+    width: 20%;
+    text-align: right;
+}
+
+.tests-suite .test-suite dl {
+    width: 600px;
+}
+
+.tests-suite .test-suite dt {
+    width: 20%;
+}
+
+.tests-suite .test-suite dd {
+    width: 70%;
+}
+
+.test {
+    border: 1px solid black;
+    padding: 2px;
+}
+
+.test .message {
+    padding: 6px;
+    cursor: pointer;
+    color: white;
+}
+
+.test.succeed .message {
+    background: green;
+}
+
+.test.failed .message {
+    background: red;
+}
+
+.test.warning .message {
+    background: orange;
+}
