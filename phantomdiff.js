@@ -6,7 +6,7 @@ var fs = require("fs");
 
 var Config = {
     addressURL: 'http://localhost:1337',
-    page: './images.html',
+    page: './phantomdiff.html',
     imagediff: './libs/imagediff.min.js',
     htmlReporter: './reporter/html'
 };

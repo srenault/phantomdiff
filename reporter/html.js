@@ -31,8 +31,8 @@ HTMLExporter.prototype.copyImagesToReport = function copyImagesToReport(baseline
         currentPath = current.split('/'),
         baselineFilename = baselinePath[baselinePath.length - 1],
         currentFilename = currentPath[currentPath.length - 1],
-        baselineReport = 'report/baseline/' + baselineFilename,
-        currentReport = 'report/current/' + currentFilename;
+        baselineReport = 'report/images/baseline/' + baselineFilename,
+        currentReport = 'report/images/current/' + currentFilename;
 
     try { fs.remove(baselineReport); } catch(e) {}
     try { fs.remove(currentReport); } catch(e) {}

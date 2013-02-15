@@ -1,5 +1,8 @@
 /**
  * baseline.js
+ * 
+ * This file is intented to take screenshot of specified URL.
+ *
  */
 
 (function() {
